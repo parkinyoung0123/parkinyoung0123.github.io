@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>박인영 업무 포털</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0f172a; --ink-2:#334155; --ink-3:#64748b; --line:#e2e8f0;
+    --bg:#f1f5f9; --card:#ffffff; --brand:#1d4ed8; --brand-soft:#e8eefc;
+    --sun:#dc2626; --sat:#2563eb; --ok:#059669; --warn:#b45309;
+    --radius:14px; --shadow:0 1px 2px rgba(15,23,42,.06),0 8px 24px rgba(15,23,42,.06);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:"Noto Sans KR",system-ui,-apple-system,"Malgun Gothic",sans-serif;
+    background:var(--bg); color:var(--ink); -webkit-font-smoothing:antialiased;
+    padding-bottom:env(safe-area-inset-bottom);
+  }
+  a{color:inherit;text-decoration:none}
+  button{font-family:inherit}
+
+  /* ── 잠금 화면 ── */
+  #lock{
+    min-height:100svh; display:flex; align-items:center; justify-content:center;
+    padding:24px; background:
+      radial-gradient(1200px 600px at 50% -10%, #dbe7ff 0%, transparent 60%), var(--bg);
+  }
+  .lock-box{width:100%; max-width:360px; text-align:center}
+  .lock-mark{
+    width:56px; height:56px; margin:0 auto 18px; border-radius:16px;
+    background:var(--brand); color:#fff; display:grid; place-items:center;
+    font-size:26px; font-weight:700; box-shadow:var(--shadow);
+  }
+  .lock-box h1{margin:0 0 6px; font-size:21px; letter-spacing:-.02em}
+  .lock-box p{margin:0 0 26px; color:var(--ink-3); font-size:13.5px}
+  .pin-input{
+    width:100%; padding:16px 18px; font-size:22px; letter-spacing:.42em; text-align:center;
+    border:1.5px solid var(--line); border-radius:12px; background:#fff; color:var(--ink);
+    outline:none; transition:border-color .15s, box-shadow .15s;
+  }
+  .pin-input:focus{border-color:var(--brand); box-shadow:0 0 0 4px var(--brand-soft)}
+  .btn-primary{
+    width:100%; margin-top:12px; padding:15px 18px; border:0; border-radius:12px;
+    background:var(--brand); color:#fff; font-size:15.5px; font-weight:700; cursor:pointer;
+    transition:filter .15s;
+  }
+  .btn-primary:hover{filter:brightness(1.06)}
+  .btn-primary:disabled{opacity:.55; cursor:default}
+  .lock-msg{min-height:20px; margin-top:12px; font-size:13px; color:var(--sun)}
+  .lock-foot{margin-top:24px; font-size:12px; color:var(--ink-3); line-height:1.7}
+
+  /* ── 본문 ── */
+  #app{display:none}
+  header.top{
+    position:sticky; top:0; z-index:20; background:rgba(255,255,255,.92);
+    backdrop-filter:saturate(180%) blur(10px); border-bottom:1px solid var(--line);
+  }
+  .top-in{max-width:1180px; margin:0 auto; padding:12px 18px; display:flex; align-items:center; gap:12px}
+  .brand{display:flex; align-items:center; gap:10px; min-width:0}
+  .brand-mark{
+    width:34px; height:34px; border-radius:10px; background:var(--brand); color:#fff;
+    display:grid; place-items:center; font-weight:700; font-size:15px; flex:none;
+  }
+  .brand-txt{min-width:0}
+  .brand-txt b{display:block; font-size:15px; letter-spacing:-.01em; line-height:1.25}
+  .brand-txt span{display:block; font-size:11.5px; color:var(--ink-3); line-height:1.3}
+  .top-actions{margin-left:auto; display:flex; gap:6px}
+  .icon-btn{
+    border:1px solid var(--line); background:#fff; color:var(--ink-2);
+    border-radius:10px; padding:8px 11px; font-size:12.5px; cursor:pointer; white-space:nowrap;
+  }
+  .icon-btn:hover{background:#f8fafc}
+
+  main{max-width:1180px; margin:0 auto; padding:18px}
+
+  .summary{
+    display:flex; flex-wrap:wrap; gap:10px; align-items:center;
+    margin-bottom:16px; color:var(--ink-3); font-size:12.5px;
+  }
+  .summary strong{color:var(--ink); font-size:14px; font-weight:700}
+
+  .week{margin-bottom:26px}
+  .week-head{display:flex; align-items:baseline; gap:10px; margin:0 2px 10px}
+  .week-head h2{margin:0; font-size:15.5px; letter-spacing:-.01em}
+  .week-head span{font-size:12px; color:var(--ink-3)}
+
+  .days{display:grid; grid-template-columns:repeat(7,minmax(0,1fr)); gap:10px}
+  @media (max-width:900px){ .days{grid-template-columns:repeat(2,minmax(0,1fr))} }
+  @media (max-width:520px){ .days{grid-template-columns:1fr} }
+
+  .day{
+    background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
+    padding:11px 12px; min-height:96px; box-shadow:var(--shadow);
+  }
+  .day.is-today{border-color:var(--brand); box-shadow:0 0 0 3px var(--brand-soft)}
+  .day-top{display:flex; align-items:center; gap:6px; margin-bottom:8px}
+  .day-date{font-size:12.5px; color:var(--ink-3); font-weight:500}
+  .day-date b{font-size:13.5px; color:var(--ink); font-weight:700}
+  .day-name{font-size:11.5px; color:var(--ink-3)}
+  .day-name.sun{color:var(--sun)} .day-name.sat{color:var(--sat)}
+  .today-badge{
+    margin-left:auto; font-size:10.5px; font-weight:700; color:#fff; background:var(--brand);
+    border-radius:999px; padding:2px 7px;
+  }
+  .ev{
+    display:flex; gap:6px; padding:5px 7px; margin-bottom:5px; border-radius:9px;
+    background:#f8fafc; border-left:3px solid #94a3b8; font-size:12.5px; line-height:1.35;
+    color:var(--ink-2); word-break:keep-all;
+  }
+  .ev-time{color:var(--ink-3); font-variant-numeric:tabular-nums; flex:none; font-size:11.5px; padding-top:1px}
+  .ev.all-day{border-left-color:var(--brand); background:var(--brand-soft)}
+  .task{
+    display:flex; gap:8px; align-items:flex-start; padding:6px 4px; font-size:12.8px; line-height:1.4;
+  }
+  .task input{margin:2px 0 0; width:15px; height:15px; accent-color:var(--brand); flex:none; cursor:pointer}
+  .task .txt{flex:1; word-break:keep-all}
+  .task.done .txt{color:var(--ink-3); text-decoration:line-through}
+  .task .del{
+    border:0; background:transparent; color:#cbd5e1; font-size:14px; line-height:1; cursor:pointer;
+    padding:0 2px; flex:none;
+  }
+  .task .del:hover{color:var(--sun)}
+  .empty{color:#94a3b8; font-size:12px; padding:2px 4px}
+
+  .panel{
+    background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
+    padding:14px 16px; box-shadow:var(--shadow); margin-bottom:22px;
+  }
+  .panel h3{margin:0 0 10px; font-size:13.5px; color:var(--ink-2); letter-spacing:-.01em}
+  .panel .task{border-top:1px solid #f1f5f9}
+  .panel .task:first-of-type{border-top:0}
+
+  /* 빠른 추가 */
+  .quick{position:sticky; bottom:0; z-index:15; padding:10px 0 4px; background:linear-gradient(180deg,rgba(241,245,249,0),var(--bg) 38%)}
+  .quick-in{
+    display:flex; gap:8px; background:#fff; border:1px solid var(--line); border-radius:14px;
+    padding:8px; box-shadow:var(--shadow);
+  }
+  .quick-in input[type=text]{
+    flex:1; border:0; outline:none; font-size:14px; padding:10px 10px; background:transparent; min-width:0;
+  }
+  .quick-in input[type=date]{
+    border:1px solid var(--line); border-radius:9px; padding:8px; font-size:12.5px; color:var(--ink-2);
+    background:#fff; width:132px; flex:none;
+  }
+  .quick-in button{
+    border:0; border-radius:10px; background:var(--brand); color:#fff; font-weight:700;
+    padding:0 16px; font-size:13.5px; cursor:pointer; flex:none;
+  }
+
+  /* 앱 허브 */
+  .hub-head{display:flex; align-items:baseline; gap:10px; margin:26px 2px 12px}
+  .hub-head h2{margin:0; font-size:15.5px; letter-spacing:-.01em}
+  .hub-head span{font-size:12px; color:var(--ink-3)}
+  .hub{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:11px}
+  @media (max-width:900px){ .hub{grid-template-columns:repeat(2,minmax(0,1fr))} }
+  @media (max-width:520px){ .hub{grid-template-columns:1fr} }
+  .hub-card{
+    display:block; background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
+    padding:13px 14px; box-shadow:var(--shadow); transition:transform .12s, border-color .12s;
+  }
+  .hub-card:hover{transform:translateY(-1px); border-color:#cbd5e1}
+  .hub-card b{display:block; font-size:13.5px; letter-spacing:-.01em; margin-bottom:3px}
+  .hub-card p{margin:0; font-size:11.8px; color:var(--ink-3); line-height:1.45}
+  .hub-card .sub{margin-top:9px; display:flex; flex-wrap:wrap; gap:6px}
+  .hub-card .sub a{
+    font-size:11.5px; color:var(--brand); background:var(--brand-soft); border-radius:999px;
+    padding:3px 9px; font-weight:500;
+  }
+  .hub-card.soon{opacity:.62; pointer-events:none; border-style:dashed}
+  .badge-soon{
+    display:inline-block; font-size:10.5px; color:var(--warn); background:#fef3c7;
+    border-radius:999px; padding:2px 8px; margin-left:6px; vertical-align:1px; font-weight:700;
+  }
+  .hub-card.shake{animation:shake .4s}
+  @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+
+  /* 서브 탭: 일정 / 앱 */
+  .tabs{display:flex; gap:6px; margin-bottom:16px; border-bottom:1px solid var(--line); overflow-x:auto}
+  .tab{
+    border:0; background:transparent; padding:11px 14px; font-size:13.5px; color:var(--ink-3);
+    cursor:pointer; border-bottom:2px solid transparent; white-space:nowrap; font-weight:500;
+  }
+  .tab.active{color:var(--brand); border-bottom-color:var(--brand); font-weight:700}
+
+  .loading{padding:40px; text-align:center; color:var(--ink-3); font-size:13px}
+  .toast{
+    position:fixed; left:50%; bottom:88px; transform:translateX(-50%) translateY(10px);
+    background:var(--ink); color:#fff; font-size:12.5px; padding:9px 16px; border-radius:999px;
+    opacity:0; transition:opacity .2s, transform .2s; pointer-events:none; z-index:40;
+  }
+  .toast.show{opacity:1; transform:translateX(-50%) translateY(0)}
+  footer{max-width:1180px; margin:8px auto 24px; padding:0 18px; color:#94a3b8; font-size:11.5px; line-height:1.7}
+</style>
+</head>
+<body>
+
+<!-- 잠금 화면 -->
+<section id="lock">
+  <div class="lock-box">
+    <div class="lock-mark">박</div>
+    <h1>박인영 업무 포털</h1>
+    <p>2주 일정 · 할 일 · 업무 웹앱</p>
+    <input id="pin" class="pin-input" type="password" inputmode="numeric" autocomplete="current-password"
+           maxlength="8" placeholder="••••" aria-label="PIN" autofocus>
+    <button id="pinBtn" class="btn-primary">열기</button>
+    <div id="lockMsg" class="lock-msg"></div>
+    <div class="lock-foot">
+      일정과 할 일은 이 화면에 저장되지 않고,<br>확인할 때마다 구글 계정에서 불러옵니다.
+    </div>
+  </div>
+</section>
+
+<!-- 본문 -->
+<div id="app">
+  <header class="top">
+    <div class="top-in">
+      <div class="brand">
+        <div class="brand-mark">박</div>
+        <div class="brand-txt">
+          <b>업무 포털</b>
+          <span id="todayLabel">—</span>
+        </div>
+      </div>
+      <div class="top-actions">
+        <button class="icon-btn" id="refreshBtn">새로고침</button>
+        <button class="icon-btn" id="logoutBtn">잠금</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="tabs" role="tablist">
+      <button class="tab active" data-tab="schedule" role="tab">2주 일정 · 할 일</button>
+      <button class="tab" data-tab="hub" role="tab">업무 웹앱</button>
+    </div>
+
+    <section id="view-schedule">
+      <div class="summary" id="summary"></div>
+      <div id="weeks"></div>
+      <div class="panel" id="noDuePanel" style="display:none">
+        <h3>기한 없는 할 일</h3>
+        <div id="noDueList"></div>
+      </div>
+      <div class="quick">
+        <div class="quick-in">
+          <input id="newTitle" type="text" placeholder="할 일을 입력하고 Enter" aria-label="새 할 일">
+          <input id="newDue" type="date" aria-label="기한">
+          <button id="addBtn">추가</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="view-hub" style="display:none">
+      <div class="hub-head">
+        <h2>내 업무 웹앱</h2>
+        <span>새 창에서 열립니다</span>
+      </div>
+      <div class="hub" id="hub"></div>
+    </section>
+  </main>
+
+  <footer>
+    이 페이지는 일정·할일 데이터를 담고 있지 않습니다. PIN 확인 후 구글 Apps Script API에서 그때그때 불러옵니다.
+  </footer>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ── 설정 ── */
+  var API = "https://script.google.com/macros/s/AKfycbwx0Dpfe6NjoSP3xjQrJ4LAsuRhm-JQ_szEnvt3_ivjuIVt5-or5KTQ3KkXBmRL1rbFVw/exec";
+  var TOKEN_KEY = "ccm2_portal_token";
+  var TOKEN_EXP_KEY = "ccm2_portal_exp";
+
+  var APPS = [
+    { name:"정기평가", desc:"대시보드 · 현장평가 입력", links:[
+      {label:"대시보드", url:"https://script.google.com/macros/s/AKfycbw2OqoBcfhc_vVg5WhRq5gsjoSEsxXhnrsrAnYXAA6TpDEISNNl-6F8AHdNoM6EbAVW/exec"},
+      {label:"현장평가", url:"https://script.google.com/macros/s/AKfycbwdqz_R6eoDxg_S5QLKnq25TLyYZSRD8V1xbIz8beub9tFU53eOjj_dzJjcbxlonRFdfw/exec"}
+    ]},
+    { name:"수시점검 출장보고서", desc:"현장 점검 보고서 작성·메일", links:[
+      {label:"열기", url:"https://script.google.com/macros/s/AKfycbxC66b_tBpZMMm1_OFyqphafoX7qhTLukxWubv7sUpaonYuWu_hyqhROSAigaKjJUEN/exec"}
+    ]},
+    { name:"소비기한 점검일지", desc:"날인 사진 OCR·AI 대조", links:[
+      {label:"공식", url:"https://script.google.com/macros/s/AKfycbxt6FbzqilORJnVADoeijeFA2EKCiEjCpvZ9u4DCjat2T1mQW4y_11t-ZZfih2FMw2d/exec"},
+      {label:"AI비전", url:"https://script.google.com/macros/s/AKfycbz_ZkeCg8I8f7KkpsBEaoITZ-HQfBU9sUWAejLyYArdgclQQcgw_Yg0lVPBE8tgU1uNzw/exec"}
+    ]},
+    { name:"김치 일일 품질공유", desc:"품질 항목 촬영·엑셀·메일", links:[
+      {label:"열기", url:"https://script.google.com/macros/s/AKfycbyCENoddEiCduS5S7TudUIrP2d6Km9G3g00ayMFLaDXbRQKbyug6IGNEPnALcj816Cd/exec"}
+    ]},
+    { name:"CCM2팀 주간업무보고", desc:"팀원 취합 · PPT · 발송", links:[
+      {label:"열기", url:"https://script.google.com/macros/s/AKfycbyv3POiI3NAFowm2nSjzvUII7dGPGyIMELqBQJCijvI3HZkagmqE0JYiKDKVGxXDC8/exec"}
+    ]},
+    { name:"VOC 클레임 대책서", desc:"원인·개선대책서 4M 분석", links:[
+      {label:"열기", url:"https://script.google.com/macros/s/AKfycbxXVe68YInRx9pxcFIXmCeKB4mRFysSdu7iVfi3CRIJzrjzwFzPtwA1aizL6O_xcMhx/exec"}
+    ]},
+    { name:"VOC 실적관리", desc:"KPI·월별 추이·AI 진단", links:[
+      {label:"열기", url:"https://script.google.com/macros/s/AKfycbxvkcYLc_fk6zxYnxKBMh6gwYwwdhfQhjvduy36hjCr9RL67Lq6utP2y8CEFnIHiwrQzg/exec"}
+    ]},
+    { name:"식품 표시사항 검토", desc:"라벨 AI 대조·수정문안", links:[
+      {label:"열기", url:"https://script.google.com/macros/s/AKfycbxZ0PMDwmV5caEl7geOZEcEr8QBIb0VftW6hdgAeYW4VBTpErm6gqaxWLMWiuA7HYE/exec"}
+    ]},
+    { name:"이슈사항 보고", desc:"현장 이슈 보고서·제품DB", links:[
+      {label:"열기", url:"https://script.google.com/macros/s/AKfycbxTlRAJSy9zrhmfbs_V5V4hzi7dJWM5HwGH1Qtwq41FV9O8CNoi25x8qQsts6DtD4tR2g/exec"}
+    ]},
+    { name:"글로벌 김치 VOC", desc:"해외 접수·번역·회신 초안", soon:true, links:[] }
+  ];
+
+  var $ = function(id){ return document.getElementById(id); };
+  var state = { token:null, data:null };
+
+  /* ── 통신 ── */
+  function api(body){
+    return fetch(API, {
+      method:"POST",
+      headers:{ "Content-Type":"text/plain;charset=utf-8" },
+      body: JSON.stringify(body),
+      redirect:"follow"
+    }).then(function(r){ return r.json(); });
+  }
+
+  function toast(msg){
+    var t = $("toast");
+    t.textContent = msg;
+    t.classList.add("show");
+    clearTimeout(t._h);
+    t._h = setTimeout(function(){ t.classList.remove("show"); }, 2200);
+  }
+
+  /* ── 로그인 ── */
+  function saveToken(tok){
+    state.token = tok;
+    try{
+      localStorage.setItem(TOKEN_KEY, tok);
+      localStorage.setItem(TOKEN_EXP_KEY, String(Date.now() + 6*3600*1000));
+    }catch(e){}
+  }
+  function clearToken(){
+    state.token = null;
+    try{ localStorage.removeItem(TOKEN_KEY); localStorage.removeItem(TOKEN_EXP_KEY); }catch(e){}
+  }
+  function storedToken(){
+    try{
+      var t = localStorage.getItem(TOKEN_KEY);
+      var exp = Number(localStorage.getItem(TOKEN_EXP_KEY) || 0);
+      if (t && exp > Date.now()) return t;
+    }catch(e){}
+    return null;
+  }
+
+  function showLock(msg){
+    $("app").style.display = "none";
+    $("lock").style.display = "flex";
+    $("lockMsg").textContent = msg || "";
+    setTimeout(function(){ try{ $("pin").focus(); }catch(e){} }, 60);
+  }
+  function showApp(){
+    $("lock").style.display = "none";
+    $("app").style.display = "block";
+  }
+
+  function login(){
+    var pin = $("pin").value.replace(/\D/g, "");
+    if (!pin){ $("lockMsg").textContent = "PIN을 입력해 주세요."; return; }
+    $("pinBtn").disabled = true;
+    $("lockMsg").textContent = "";
+    api({ action:"login", pin:pin }).then(function(res){
+      $("pinBtn").disabled = false;
+      if (!res.ok){
+        $("lockMsg").textContent = res.message || "PIN이 맞지 않습니다.";
+        $("pin").value = "";
+        $("pin").focus();
+        return;
+      }
+      saveToken(res.token);
+      $("pin").value = "";
+      showApp();
+      load();
+    }).catch(function(){
+      $("pinBtn").disabled = false;
+      $("lockMsg").textContent = "연결에 실패했습니다. 잠시 후 다시 시도해 주세요.";
+    });
+  }
+
+  /* ── 데이터 ── */
+  function load(){
+    $("weeks").innerHTML = '<div class="loading">불러오는 중…</div>';
+    if (!state.token){ showLock(); return; }
+    api({ action:"board", token: state.token }).then(function(res){
+      if (!res.ok){
+        if (res.error === "session_expired" || res.error === "unauthorized"){
+          clearToken();
+          showLock("다시 인증이 필요합니다. PIN을 입력해 주세요.");
+          return;
+        }
+        $("weeks").innerHTML = '<div class="loading">불러오지 못했습니다: ' + esc(res.error || "오류") + '</div>';
+        return;
+      }
+      state.data = res.data;
+      render();
+    }).catch(function(){
+      $("weeks").innerHTML = '<div class="loading">연결에 실패했습니다. 새로고침을 눌러 주세요.</div>';
+    });
+  }
+
+  /* ── 렌더 ── */
+  var DOW = ["일","월","화","수","목","금","토"];
+
+  function esc(s){
+    return String(s == null ? "" : s).replace(/[&<>"']/g, function(c){
+      return { "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[c];
+    });
+  }
+  function parseYmd(s){
+    var p = String(s).split("-");
+    return new Date(Number(p[0]), Number(p[1])-1, Number(p[2]));
+  }
+  function ymd(d){
+    return d.getFullYear() + "-" + ("0"+(d.getMonth()+1)).slice(-2) + "-" + ("0"+d.getDate()).slice(-2);
+  }
+  function addDays(d, n){ return new Date(d.getFullYear(), d.getMonth(), d.getDate()+n); }
+  function dayList(startStr, n){
+    var out = [], d = parseYmd(startStr);
+    for (var i=0;i<n;i++) out.push(addDays(d,i));
+    return out;
+  }
+  function md(d){ return (d.getMonth()+1) + "/" + d.getDate(); }
+
+  function render(){
+    var d = state.data;
+    if (!d) return;
+    var todayStr = d.today;
+    var tasksByDate = {}, noDue = [], eventsByDate = {};
+    d.tasks.forEach(function(t){
+      if (t.due) (tasksByDate[t.due] = tasksByDate[t.due] || []).push(t);
+      else noDue.push(t);
+    });
+    d.events.forEach(function(e){
+      (eventsByDate[e.date] = eventsByDate[e.date] || []).push(e);
+    });
+
+    $("todayLabel").textContent = todayStr.replace(/-/g,".") + " (" + DOW[parseYmd(todayStr).getDay()] + ")";
+    var openCount = d.tasks.filter(function(t){ return !t.done; }).length;
+    $("summary").innerHTML = "<strong>" + openCount + "</strong>개 할 일 남음 · 일정 <strong>" +
+      d.events.length + "</strong>건 · " + esc(d.updatedAt.slice(11,16)) + " 기준";
+
+    var html = "";
+    html += weekBlock("이번 주", d.weeks.thisWeek, todayStr, eventsByDate, tasksByDate);
+    html += weekBlock("다음 주", d.weeks.nextWeek, todayStr, eventsByDate, tasksByDate);
+    $("weeks").innerHTML = html;
+
+    if (noDue.length){
+      $("noDuePanel").style.display = "block";
+      $("noDueList").innerHTML = noDue.map(taskHtml).join("");
+    } else {
+      $("noDuePanel").style.display = "none";
+    }
+
+    $("newDue").value = $("newDue").value || todayStr;
+  }
+
+  function weekBlock(title, range, todayStr, eventsByDate, tasksByDate){
+    var days = dayList(range.start, 7);
+    var out = '<div class="week"><div class="week-head"><h2>' + title + '</h2><span>' +
+      md(days[0]) + " – " + md(days[6]) + '</span></div><div class="days">';
+    days.forEach(function(dt){
+      var key = ymd(dt), dow = dt.getDay();
+      var cls = "day" + (key === todayStr ? " is-today" : "");
+      out += '<div class="' + cls + '">';
+      out += '<div class="day-top"><span class="day-date"><b>' + md(dt) + '</b></span>' +
+             '<span class="day-name' + (dow===0?' sun':dow===6?' sat':'') + '">' + DOW[dow] + '</span>';
+      if (key === todayStr) out += '<span class="today-badge">오늘</span>';
+      out += '</div>';
+      var evs = eventsByDate[key] || [];
+      if (evs.length){
+        evs.forEach(function(e){
+          out += '<div class="ev' + (e.allDay ? " all-day" : "") + '">' +
+                 '<span class="ev-time">' + (e.allDay ? "종일" : esc(e.start)) + '</span>' +
+                 '<span>' + esc(e.title) + '</span></div>';
+        });
+      }
+      var tks = tasksByDate[key] || [];
+      tks.forEach(function(t){ out += taskHtml(t); });
+      if (!evs.length && !tks.length) out += '<div class="empty">—</div>';
+      out += '</div>';
+    });
+    out += '</div></div>';
+    return out;
+  }
+
+  function taskHtml(t){
+    return '<div class="task' + (t.done ? " done" : "") + '">' +
+      '<input type="checkbox" data-id="' + esc(t.id) + '"' + (t.done ? " checked" : "") + ' aria-label="완료">' +
+      '<span class="txt">' + esc(t.title) + '</span>' +
+      '<button class="del" data-del="' + esc(t.id) + '" title="삭제" aria-label="삭제">×</button></div>';
+  }
+
+  /* ── 할 일 조작 ── */
+  function addTask(){
+    var title = $("newTitle").value.trim();
+    if (!title) return;
+    var due = $("newDue").value || (state.data ? state.data.today : "");
+    $("addBtn").disabled = true;
+    api({ action:"addTask", token: state.token, title: title, due: due }).then(function(res){
+      $("addBtn").disabled = false;
+      if (!res.ok){ toast(res.message || "추가하지 못했습니다."); return; }
+      $("newTitle").value = "";
+      load();
+    }).catch(function(){ $("addBtn").disabled = false; toast("연결에 실패했습니다."); });
+  }
+
+  function toggleTask(id, done){
+    api({ action:"toggleTask", token: state.token, id: id, done: done }).then(function(res){
+      if (!res.ok){ toast("변경하지 못했습니다."); return; }
+      load();
+    }).catch(function(){ toast("연결에 실패했습니다."); });
+  }
+
+  function deleteTask(id){
+    if (!confirm("이 할 일을 삭제할까요?")) return;
+    api({ action:"deleteTask", token: state.token, id: id }).then(function(res){
+      if (!res.ok){ toast("삭제하지 못했습니다."); return; }
+      toast("삭제했습니다.");
+      load();
+    }).catch(function(){ toast("연결에 실패했습니다."); });
+  }
+
+  /* ── 앱 허브 ── */
+  function renderHub(){
+    $("hub").innerHTML = APPS.map(function(a){
+      var links = (a.links || []).map(function(l){
+        return '<a href="' + l.url + '" target="_blank" rel="noopener">' + esc(l.label) + '</a>';
+      }).join("");
+      return '<div class="hub-card' + (a.soon ? " soon" : "") + '">' +
+        '<b>' + esc(a.name) + (a.soon ? '<span class="badge-soon">준비 중</span>' : '') + '</b>' +
+        '<p>' + esc(a.desc) + '</p>' +
+        (links ? '<div class="sub">' + links + '</div>' : '') +
+        '</div>';
+    }).join("");
+  }
+
+  /* ── 이벤트 연결 ── */
+  $("pinBtn").addEventListener("click", login);
+  $("pin").addEventListener("keydown", function(e){ if (e.key === "Enter") login(); });
+  $("refreshBtn").addEventListener("click", function(){ load(); toast("새로고침"); });
+  $("logoutBtn").addEventListener("click", function(){
+    if (state.token) api({ action:"logout", token: state.token }).catch(function(){});
+    clearToken();
+    state.data = null;
+    showLock("잠갔습니다. PIN을 입력해 주세요.");
+  });
+  $("addBtn").addEventListener("click", addTask);
+  $("newTitle").addEventListener("keydown", function(e){ if (e.key === "Enter") addTask(); });
+
+  document.addEventListener("change", function(e){
+    var t = e.target;
+    if (t && t.matches('input[type=checkbox][data-id]')) toggleTask(t.getAttribute("data-id"), t.checked);
+  });
+  document.addEventListener("click", function(e){
+    var t = e.target;
+    if (t && t.matches("button[data-del]")) deleteTask(t.getAttribute("data-del"));
+    if (t && t.classList.contains("hub-card") && t.classList.contains("soon")){
+      t.classList.remove("shake"); void t.offsetWidth; t.classList.add("shake");
+    }
+  });
+  document.querySelectorAll(".tab").forEach(function(b){
+    b.addEventListener("click", function(){
+      document.querySelectorAll(".tab").forEach(function(x){ x.classList.remove("active"); });
+      b.classList.add("active");
+      var tab = b.getAttribute("data-tab");
+      $("view-schedule").style.display = tab === "schedule" ? "block" : "none";
+      $("view-hub").style.display = tab === "hub" ? "block" : "none";
+    });
+  });
+
+  /* ── 시작 ── */
+  renderHub();
+  var tok = storedToken();
+  if (tok){
+    state.token = tok;
+    showApp();
+    load();
+  } else {
+    showLock("");
+  }
+})();
+</script>
+</body>
+</html>
