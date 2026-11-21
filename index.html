@@ -360,6 +360,7 @@
   function showLock(msg){
     $("app").style.display = "none";
     $("lock").style.display = "flex";
+    $("pin").value = "";
     $("lockMsg").textContent = msg || "";
     setTimeout(function(){ try{ $("pin").focus(); }catch(e){} }, 60);
   }
@@ -557,6 +558,7 @@
     clearToken();
     state.data = null;
     showLock("잠갔습니다. PIN을 입력해 주세요.");
+    $("pin").value = "";
   });
   $("addBtn").addEventListener("click", addTask);
   $("newTitle").addEventListener("keydown", function(e){ if (e.key === "Enter") addTask(); });
