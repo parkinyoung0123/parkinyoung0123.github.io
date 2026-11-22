@@ -190,6 +190,130 @@
     background:var(--brand-soft); border-radius:999px; padding:4px 11px;
   }
 
+  /* 개인 일정 월간 달력 */
+  .pm-card{
+    background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
+    box-shadow:var(--shadow); padding:16px 16px 14px; margin-bottom:14px;
+  }
+  .pm-head{display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:14px}
+  .pm-title{margin:0; font-size:21px; font-weight:700; letter-spacing:-.02em; line-height:1.2}
+  .pm-nav{margin-left:auto; display:flex; gap:6px; flex:none}
+  .pm-btn{
+    border:1px solid var(--line); background:#fff; color:var(--ink-2); border-radius:9px;
+    padding:8px 12px; font-size:12.5px; font-weight:500; cursor:pointer; white-space:nowrap;
+    transition:background .12s, border-color .12s, color .12s;
+  }
+  .pm-btn:hover{background:#f8fafc; border-color:#cbd5e1}
+  .pm-btn:active{background:var(--brand-soft); color:var(--brand); border-color:var(--brand-soft)}
+  .pm-btn:disabled{opacity:.5; cursor:default}
+  .pm-btn .chev{color:var(--brand); font-weight:700}
+
+  .pm-dow{display:grid; grid-template-columns:repeat(7,minmax(0,1fr))}
+  .pm-dow span{
+    text-align:center; font-size:11.5px; font-weight:500; color:var(--ink-3);
+    padding:7px 0 8px;
+  }
+  .pm-dow span.sun{color:var(--sun)}
+  .pm-dow span.sat{color:var(--sat)}
+  .pm-grid{
+    display:grid; grid-template-columns:repeat(7,minmax(0,1fr));
+    border-top:1px solid #eef2f7; border-left:1px solid #eef2f7; border-radius:2px; overflow:hidden;
+  }
+  .pm-cell{
+    font-family:inherit; text-align:left; background:#fff; border:0;
+    border-right:1px solid #eef2f7; border-bottom:1px solid #eef2f7;
+    min-height:66px; padding:7px 7px 6px; display:flex; flex-direction:column;
+    align-items:flex-start; gap:5px; position:relative; min-width:0;
+  }
+  .pm-cell.blank{cursor:default; background:#fcfdff}
+  .pm-num{font-size:13.5px; font-weight:600; color:var(--ink); line-height:1; font-variant-numeric:tabular-nums}
+  .pm-cell.sun .pm-num{color:var(--sun)}
+  .pm-cell.sat .pm-num{color:var(--sat)}
+  .pm-cell.has-ev{background:var(--brand-soft); cursor:pointer; transition:background .12s}
+  .pm-cell.has-ev:hover{background:#dde7fb}
+  .pm-cell.has-ev:hover .pm-num{color:var(--brand)}
+  .pm-cell.is-today{box-shadow:inset 0 0 0 2px var(--brand)}
+  .pm-cell.is-today .pm-num{color:var(--brand); font-weight:700}
+  .pm-cell.is-today.blank{box-shadow:none}
+  .pm-mark{display:inline-flex; align-items:center; gap:5px; max-width:100%}
+  .pm-badge{
+    display:inline-flex; align-items:center; gap:4px; background:#fff; border:1px solid #dbe4f6;
+    border-radius:999px; padding:1px 7px 1px 6px; font-size:10.5px; font-weight:600; color:var(--brand);
+    line-height:1.6; max-width:100%; box-shadow:0 1px 2px rgba(15,23,42,.04);
+  }
+  .pm-dot{width:6px; height:6px; border-radius:50%; background:var(--brand); flex:none}
+  .pm-cell .pm-today-tag{
+    position:absolute; right:5px; top:5px; font-size:9.5px; font-weight:700; color:#fff;
+    background:var(--brand); border-radius:999px; padding:1px 5px; line-height:1.6;
+  }
+
+  .pm-date-card{
+    display:grid; grid-template-columns:190px minmax(0,1fr);
+    background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
+    box-shadow:var(--shadow); padding:15px 18px; margin-bottom:10px;
+    scroll-margin-top:84px; transition:border-color .2s, box-shadow .2s, background .2s;
+  }
+  .pm-date-card.is-focus{
+    border-color:var(--brand); box-shadow:0 0 0 3px var(--brand-soft), var(--shadow);
+  }
+  .pm-date-left{display:flex; align-items:center; gap:11px; padding-right:16px; border-right:1px dashed #d7e0ef; min-width:0}
+  .pm-date-ico{
+    width:40px; height:40px; border-radius:50%; background:var(--brand-soft); color:var(--brand);
+    display:grid; place-items:center; flex:none;
+  }
+  .pm-date-txt{min-width:0}
+  .pm-date-txt b{display:inline; font-size:15.5px; font-weight:700; letter-spacing:-.01em}
+  .pm-date-dow{font-size:13.5px; color:var(--ink-3); font-weight:500}
+  .pm-date-dow.sun{color:var(--sun)} .pm-date-dow.sat{color:var(--sat)}
+  .pm-today-chip{
+    display:inline-block; margin-left:5px; font-size:10px; font-weight:700; color:#fff; background:var(--brand);
+    border-radius:999px; padding:1px 6px; vertical-align:1px;
+  }
+  .pm-date-body{padding-left:16px; min-width:0}
+  .pm-ev + .pm-ev{margin-top:11px}
+  .pm-ev-head{display:flex; gap:9px; align-items:baseline; flex-wrap:wrap}
+  .pm-ev-time{
+    font-size:13px; font-weight:700; color:var(--brand); font-variant-numeric:tabular-nums; flex:none;
+    line-height:1.45;
+  }
+  .pm-ev-title{font-size:13px; color:var(--brand); font-weight:500; word-break:keep-all; line-height:1.45}
+  .pm-ev-loc{margin-top:3px; font-size:11.5px; color:var(--ink-3); line-height:1.5; word-break:keep-all}
+  .pm-ev-desc{margin-top:2px; font-size:11.5px; color:#94a3b8; line-height:1.6; word-break:keep-all}
+  .pm-ev-desc div{position:relative}
+  .pm-tasks{margin-top:10px; padding-top:8px; border-top:1px solid #f1f5f9}
+  .pm-tasks-h{font-size:10.5px; font-weight:700; color:var(--ink-3); margin-bottom:2px}
+  .pm-empty{
+    background:var(--card); border:1px dashed #cbd5e1; border-radius:var(--radius);
+    padding:22px 18px; text-align:center; color:var(--ink-3); font-size:12.5px; line-height:1.8;
+    margin-bottom:10px; word-break:keep-all;
+  }
+  .pm-empty b{color:var(--ink-2)}
+  .pm-loading{
+    background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
+    padding:26px; text-align:center; color:var(--ink-3); font-size:12.5px; margin-bottom:10px;
+  }
+  @media (max-width:600px){
+    .pm-card{padding:12px 10px 10px; border-radius:12px}
+    .pm-head{gap:8px; margin-bottom:11px}
+    .pm-title{font-size:17.5px}
+    .pm-nav{margin-left:0; width:100%; gap:5px}
+    .pm-btn{flex:1 1 0; padding:7px 4px; font-size:11.5px; text-align:center}
+    .pm-dow span{font-size:10px; padding:5px 0 6px}
+    .pm-cell{min-height:50px; padding:5px 4px 4px; gap:3px}
+    .pm-num{font-size:12px}
+    .pm-badge{font-size:9px; padding:0 5px; gap:3px}
+    .pm-dot{width:5px; height:5px}
+    .pm-cell .pm-today-tag{display:none}
+    .pm-date-card{grid-template-columns:1fr; padding:12px 13px}
+    .pm-date-left{border-right:0; border-bottom:1px dashed #d7e0ef; padding:0 0 8px; margin-bottom:9px}
+    .pm-date-ico{width:32px; height:32px}
+    .pm-date-txt b{font-size:14.5px}
+    .pm-date-body{padding-left:0}
+    .pm-ev-head{gap:7px}
+    .pm-ev-time{font-size:12.5px}
+    .pm-ev-title{font-size:12.5px}
+  }
+
   /* 빠른 추가 */
   .quick{position:sticky; bottom:0; z-index:15; padding:10px 0 4px; background:linear-gradient(180deg,rgba(241,245,249,0),var(--bg) 38%)}
   .quick-in{
@@ -390,6 +514,24 @@
           <div class="scope-note" id="scopeNote"></div>
           <div class="hint" id="scopeHint" style="display:none"></div>
           <div id="weeks"></div>
+
+          <div id="personalWrap" style="display:none">
+            <section class="pm-card" id="personalMonth" aria-label="개인 일정 월간 달력">
+              <div class="pm-head">
+                <h2 class="pm-title" id="pmTitle">—</h2>
+                <div class="pm-nav">
+                  <button class="pm-btn" id="pmPrev" type="button"><span class="chev">&lt;</span> 이전 달</button>
+                  <button class="pm-btn" id="pmToday" type="button">오늘</button>
+                  <button class="pm-btn" id="pmNext" type="button">다음 달 <span class="chev">&gt;</span></button>
+                </div>
+              </div>
+              <div class="pm-dow">
+                <span class="sun">일</span><span>월</span><span>화</span><span>수</span><span>목</span><span>금</span><span class="sat">토</span>
+              </div>
+              <div class="pm-grid" id="pmGrid" role="grid" aria-label="월간 일정 달력"></div>
+            </section>
+            <div id="personalList"></div>
+          </div>
           <div class="panel" id="noDuePanel" style="display:none">
             <h3>기한 없는 할 일</h3>
             <div id="noDueList"></div>
@@ -541,7 +683,8 @@
   ];
 
   var $ = function(id){ return document.getElementById(id); };
-  var state = { token:null, data:null, view:"work", cat:"report", navOpen:false };
+  var state = { token:null, data:null, view:"work", cat:"report", navOpen:false,
+                pm:null, pmCache:{}, pmCovered:{}, pmLoading:{}, pmFocus:"" };
 
   /* ── 통신 ── */
   function api(body){
@@ -632,6 +775,7 @@
         return;
       }
       state.data = res.data;
+      pmIndex();
       render();
     }).catch(function(){
       $("weeks").innerHTML = '<div class="loading">연결에 실패했습니다. 새로고침을 눌러 주세요.</div>';
@@ -682,31 +826,25 @@
     });
 
     $("todayLabel").textContent = todayStr.replace(/-/g,".") + " (" + DOW[parseYmd(todayStr).getDay()] + ")";
-    var openCount = tasks.filter(function(t){ return !t.done; }).length;
-    $("summary").innerHTML = "<strong>" + openCount + "</strong>개 할 일 남음 · 일정 <strong>" +
-      events.length + "</strong>건 · " + esc(d.updatedAt.slice(11,16)) + " 기준";
 
-    var calName = isPersonalScope ? (d.personalCalName || "개인 일정") : "기본 캘린더";
-    var note = '<span class="scope-chip">' + (isPersonalScope ? "🏠" : "🏢") +
-      " <b>" + esc(calName) + "</b>에서 불러옴</span>";
-    if (isPersonalScope && d.personalCalError){
-      note += '<span class="scope-chip warn">개인 캘린더 확인 필요: ' + esc(d.personalCalError) + '</span>';
+    /* 개인 일정은 월간 달력, 회사 일정은 기존 2주(7일×2) 그리드 */
+    $("weeks").style.display = isPersonalScope ? "none" : "block";
+    $("personalWrap").style.display = isPersonalScope ? "block" : "none";
+
+    if (isPersonalScope){
+      renderPersonalMonth(tasks, todayStr);
+    } else {
+      var openCount = tasks.filter(function(t){ return !t.done; }).length;
+      $("summary").innerHTML = "<strong>" + openCount + "</strong>개 할 일 남음 · 일정 <strong>" +
+        events.length + "</strong>건 · " + esc(d.updatedAt.slice(11,16)) + " 기준";
+      $("scopeNote").innerHTML = '<span class="scope-chip">🏢 <b>기본 캘린더</b>에서 불러옴</span>' +
+        '<span class="scope-chip">회사 일정 기본 캘린더</span>';
+      $("scopeHint").style.display = "none";
+      var html = "";
+      html += weekBlock("이번 주", d.weeks.thisWeek, todayStr, eventsByDate, tasksByDate);
+      html += weekBlock("다음 주", d.weeks.nextWeek, todayStr, eventsByDate, tasksByDate);
+      $("weeks").innerHTML = html;
     }
-    note += '<span class="scope-chip">' + (isPersonalScope ? "개인 전용 캘린더" : "회사 일정 기본 캘린더") + "</span>";
-    $("scopeNote").innerHTML = note;
-
-    var showHint = isPersonalScope && !events.length && !tasks.length;
-    $("scopeHint").style.display = showHint ? "block" : "none";
-    if (showHint){
-      $("scopeHint").innerHTML = "🏠 <b>개인 일정</b> 캘린더가 아직 비어 있습니다.<br>" +
-        "구글 캘린더(앱·웹)에서 <b>개인 일정</b> 캘린더를 선택해 일정을 추가하면 이 화면에 그대로 나타납니다. " +
-        "회사 일정은 기존 기본 캘린더에 그대로 두시면 됩니다.";
-    }
-
-    var html = "";
-    html += weekBlock("이번 주", d.weeks.thisWeek, todayStr, eventsByDate, tasksByDate);
-    html += weekBlock("다음 주", d.weeks.nextWeek, todayStr, eventsByDate, tasksByDate);
-    $("weeks").innerHTML = html;
 
     if (noDue.length){
       $("noDuePanel").style.display = "block";
@@ -716,6 +854,211 @@
     }
 
     $("newDue").value = $("newDue").value || todayStr;
+  }
+
+  /* ── 개인 일정 월간 달력 ── */
+  function pmKey(y, m){ return y + "-" + ("0" + m).slice(-2); }
+  function monthOf(ymdStr){
+    var dt = parseYmd(ymdStr);
+    return { y: dt.getFullYear(), m: dt.getMonth() + 1 };
+  }
+
+  /* board가 내려준 개인 일정 범위(-1개월~+5개월)를 달별로 나눠 캐시에 담는다. */
+  function pmIndex(){
+    var d = state.data;
+    state.pmCache = {}; state.pmCovered = {}; state.pmLoading = {};
+    if (!d) return;
+    var r = d.personalRange;
+    if (r && r.from && r.to){
+      var a = parseYmd(r.from), b = parseYmd(r.to);
+      var y = a.getFullYear(), m = a.getMonth() + 1, guard = 0;
+      while ((y < b.getFullYear() || (y === b.getFullYear() && m <= b.getMonth() + 1)) && guard++ < 60){
+        var k = pmKey(y, m);
+        state.pmCovered[k] = true;
+        state.pmCache[k] = state.pmCache[k] || [];
+        m++; if (m > 12){ m = 1; y++; }
+      }
+    }
+    (d.personalEvents || []).forEach(function(e){
+      var s = parseYmd(e.date);
+      var en = e.endDate ? parseYmd(e.endDate) : s;
+      if (en < s) en = s;
+      var y = s.getFullYear(), m = s.getMonth() + 1, guard = 0;
+      while ((y < en.getFullYear() || (y === en.getFullYear() && m <= en.getMonth() + 1)) && guard++ < 60){
+        var k = pmKey(y, m);
+        (state.pmCache[k] = state.pmCache[k] || []).push(e);
+        state.pmCovered[k] = true;
+        m++; if (m > 12){ m = 1; y++; }
+      }
+    });
+  }
+
+  function nextMonthLabel(y, m){
+    var ny = m === 12 ? y + 1 : y, nm = m === 12 ? 1 : m + 1;
+    var evs = state.pmCache[pmKey(ny, nm)];
+    return (evs && evs.length) ? (nm + "월") : "";
+  }
+
+  function renderPersonalMonth(tasks, todayStr){
+    var d = state.data;
+    if (!state.pm) state.pm = monthOf(todayStr);
+    var y = state.pm.y, m = state.pm.m, key = pmKey(y, m);
+    var evs = state.pmCache[key];
+    var loading = !state.pmCovered[key];
+    var monthTasks = tasks.filter(function(t){ return t.due && t.due.slice(0, 7) === key; });
+
+    $("pmTitle").textContent = y + "년 " + m + "월";
+    var openCount = monthTasks.filter(function(t){ return !t.done; }).length;
+    $("summary").innerHTML = "<strong>" + y + "년 " + m + "월</strong> · 일정 <strong>" +
+      (evs ? evs.length : 0) + "</strong>건 · 할 일 <strong>" + openCount + "</strong>개 남음" +
+      (d.updatedAt ? " · " + esc(d.updatedAt.slice(11, 16)) + " 기준" : "");
+
+    var note = '<span class="scope-chip">🏠 <b>' + esc(d.personalCalName || "개인 일정") + '</b>에서 불러옴</span>' +
+      '<span class="scope-chip">개인 전용 캘린더</span>';
+    if (d.personalCalError) note += '<span class="scope-chip warn">개인 캘린더 확인 필요: ' + esc(d.personalCalError) + '</span>';
+    $("scopeNote").innerHTML = note;
+
+    var showHint = !d.personalCalError && !(d.personalEvents || []).length && !tasks.length;
+    $("scopeHint").style.display = showHint ? "block" : "none";
+    if (showHint){
+      $("scopeHint").innerHTML = "🏠 <b>개인 일정</b> 캘린더가 아직 비어 있습니다.<br>" +
+        "구글 캘린더(앱·웹)에서 <b>" + esc(d.personalCalName || "개인 일정") +
+        "</b> 캘린더를 선택해 일정을 추가하면 이 화면에 그대로 나타납니다.";
+    }
+
+    /* 달력 셀 — 여러 날에 걸친 일정은 해당 날짜마다 표시 */
+    var byDate = {};
+    (evs || []).forEach(function(e){
+      var s = parseYmd(e.date);
+      var en = e.endDate ? parseYmd(e.endDate) : s;
+      if (en < s) en = s;
+      for (var dt = new Date(s.getTime()); dt <= en; dt = addDays(dt, 1)){
+        if (dt.getFullYear() === y && dt.getMonth() === m - 1){
+          var k = ymd(dt);
+          (byDate[k] = byDate[k] || []).push(e);
+        }
+      }
+    });
+
+    var cells = "";
+    if (loading){
+      cells = '<div class="pm-loading" style="grid-column:1/-1; border:0; box-shadow:none">' +
+        y + "년 " + m + "월 일정을 불러오는 중…</div>";
+    } else {
+      var first = new Date(y, m - 1, 1);
+      var lead = first.getDay();
+      var lastDate = new Date(y, m, 0).getDate();
+      for (var i = 0; i < lead; i++) cells += '<div class="pm-cell blank" aria-hidden="true"></div>';
+      for (var dn = 1; dn <= lastDate; dn++){
+        var dtc = new Date(y, m - 1, dn), k2 = ymd(dtc), dow = dtc.getDay();
+        var n = (byDate[k2] || []).length;
+        var cls = "pm-cell" + (dow === 0 ? " sun" : dow === 6 ? " sat" : "") +
+          (n ? " has-ev" : "") + (k2 === todayStr ? " is-today" : "");
+        cells += '<button type="button" class="' + cls + '" data-pmdate="' + k2 + '"' +
+          (n ? ' aria-label="' + m + "월 " + dn + "일 일정 " + n + '건 보기"' : ' tabindex="-1"') + '>' +
+          '<span class="pm-num">' + dn + '</span>' +
+          (n ? '<span class="pm-mark"><i class="pm-dot"></i><span class="pm-badge">' + n + '건</span></span>' : '') +
+          (k2 === todayStr ? '<span class="pm-today-tag">오늘</span>' : '') +
+          '</button>';
+      }
+      var tail = (7 - ((lead + lastDate) % 7)) % 7;
+      for (var j = 0; j < tail; j++) cells += '<div class="pm-cell blank" aria-hidden="true"></div>';
+    }
+    $("pmGrid").innerHTML = cells;
+
+    /* 달력 아래 목록 */
+    if (loading){
+      $("personalList").innerHTML = '<div class="pm-loading">' + y + "년 " + m + "월 개인 일정을 불러오는 중…</div>";
+      fetchPersonalMonth(y, m);
+      return;
+    }
+    var dates = {};
+    Object.keys(byDate).forEach(function(k){ dates[k] = true; });
+    monthTasks.forEach(function(t){ if (t.due) dates[t.due] = true; });
+    var keys = Object.keys(dates).sort();
+    if (!keys.length){
+      var nm = nextMonthLabel(y, m);
+      $("personalList").innerHTML = '<div class="pm-empty"><b>' + y + "년 " + m + "월</b>에 등록된 개인 일정이 없습니다." +
+        (nm ? "<br>다음 달(" + nm + ")을 눌러 병원 일정을 확인해 보세요." : "") + '</div>';
+      return;
+    }
+    $("personalList").innerHTML = keys.map(function(k){
+      return pmDateCard(k, byDate[k] || [], monthTasks.filter(function(t){ return t.due === k; }), todayStr);
+    }).join("");
+  }
+
+  function pmEventHtml(e){
+    var time = e.allDay ? "종일" : (e.start + (e.end ? "~" + e.end : ""));
+    var out = '<div class="pm-ev"><div class="pm-ev-head">' +
+      '<span class="pm-ev-time">' + esc(time) + '</span>' +
+      '<span class="pm-ev-title">' + esc(e.title) + '</span></div>';
+    if (e.location) out += '<div class="pm-ev-loc">📍 ' + esc(e.location) + '</div>';
+    var desc = String(e.description || "").trim();
+    if (desc){
+      out += '<div class="pm-ev-desc">' + desc.split(/\r?\n/).filter(function(l){ return l.trim(); })
+        .map(function(l){ return '<div>' + esc(l.replace(/^\s+/, "")) + '</div>'; }).join("") + '</div>';
+    }
+    return out + '</div>';
+  }
+
+  function pmDateCard(dstr, evs, tks, todayStr){
+    var dt = parseYmd(dstr), dow = dt.getDay();
+    var out = '<article class="pm-date-card" id="pmDate-' + dstr + '">';
+    out += '<div class="pm-date-left">' +
+      '<span class="pm-date-ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="16" rx="2.6"/><path d="M3 9.5h18M8 3v3M16 3v3"/></svg></span>' +
+      '<span class="pm-date-txt"><b>' + (dt.getMonth() + 1) + "월 " + dt.getDate() + "일</b> " +
+      '<span class="pm-date-dow' + (dow === 0 ? " sun" : dow === 6 ? " sat" : "") + '">(' + DOW[dow] + ')</span>' +
+      (dstr === todayStr ? '<span class="pm-today-chip">오늘</span>' : '') + '</span></div>';
+    out += '<div class="pm-date-body">';
+    evs.forEach(function(e){ out += pmEventHtml(e); });
+    if (tks.length){
+      out += '<div class="pm-tasks"><div class="pm-tasks-h">할 일</div>' + tks.map(taskHtml).join("") + '</div>';
+    }
+    return out + '</div></article>';
+  }
+
+  function fetchPersonalMonth(y, m){
+    var key = pmKey(y, m);
+    if (state.pmLoading[key] || state.pmCovered[key]) return;
+    state.pmLoading[key] = true;
+    api({ action:"personalMonth", token: state.token, year: y, month: m }).then(function(res){
+      state.pmLoading[key] = false;
+      if (!res.ok){
+        if (res.error === "session_expired" || res.error === "unauthorized"){
+          clearToken(); showLock("다시 인증이 필요합니다. PIN을 입력해 주세요."); return;
+        }
+        toast(res.message || "해당 달 일정을 불러오지 못했습니다.");
+        state.pmCovered[key] = true;
+        state.pmCache[key] = state.pmCache[key] || [];
+        render();
+        return;
+      }
+      state.pmCache[key] = res.events || [];
+      state.pmCovered[key] = true;
+      render();
+    }).catch(function(){
+      state.pmLoading[key] = false;
+      toast("연결에 실패했습니다. 새로고침을 눌러 주세요.");
+    });
+  }
+
+  function pmShift(n){
+    if (!state.pm) state.pm = monthOf((state.data && state.data.today) || ymd(new Date()));
+    var y = state.pm.y, m = state.pm.m + n;
+    if (m < 1){ m = 12; y--; }
+    else if (m > 12){ m = 1; y++; }
+    state.pm = { y: y, m: m };
+    render();
+  }
+
+  function pmFocusDate(dstr){
+    var el = document.getElementById("pmDate-" + dstr);
+    if (!el) return;
+    document.querySelectorAll(".pm-date-card.is-focus").forEach(function(c){ c.classList.remove("is-focus"); });
+    el.classList.add("is-focus");
+    try { el.scrollIntoView({ behavior: "smooth", block: "center" }); } catch (err) { el.scrollIntoView(); }
+    clearTimeout(state.pmFocusTimer);
+    state.pmFocusTimer = setTimeout(function(){ el.classList.remove("is-focus"); }, 2800);
   }
 
   function weekBlock(title, range, todayStr, eventsByDate, tasksByDate){
@@ -866,6 +1209,8 @@
   document.addEventListener("click", function(e){
     var t = e.target;
     if (t && t.matches("button[data-del]")) deleteTask(t.getAttribute("data-del"));
+    var cell = (t && t.closest) ? t.closest("[data-pmdate]") : null;
+    if (cell) pmFocusDate(cell.getAttribute("data-pmdate"));
     if (t && t.classList.contains("hub-card") && t.classList.contains("soon")){
       t.classList.remove("shake"); void t.offsetWidth; t.classList.add("shake");
     }
@@ -881,6 +1226,14 @@
     var body = $("busBody"), collapsed = body.classList.toggle("is-collapsed");
     $("busToggle").textContent = collapsed ? "펼치기" : "접기";
     $("busToggle").setAttribute("aria-expanded", collapsed ? "false" : "true");
+  });
+  $("pmPrev").addEventListener("click", function(){ pmShift(-1); });
+  $("pmNext").addEventListener("click", function(){ pmShift(1); });
+  $("pmToday").addEventListener("click", function(){
+    if (!state.data) return;
+    state.pm = monthOf(state.data.today);
+    render();
+    setTimeout(function(){ pmFocusDate(state.data.today); }, 80);
   });
   $("navWork").addEventListener("click", function(){
     setView("work");
