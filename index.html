@@ -341,6 +341,7 @@
   @media (max-width:900px){ .hub{grid-template-columns:repeat(2,minmax(0,1fr))} }
   @media (max-width:520px){ .hub{grid-template-columns:1fr} }
   .hub-card{
+    position:relative;
     display:flex; flex-direction:column; align-items:center; text-align:center;
     background:var(--card); border:1px solid var(--line); border-radius:16px;
     padding:22px 18px 18px; box-shadow:var(--shadow);
@@ -380,6 +381,73 @@
   }
   .hub-card.shake{animation:shake .4s}
   @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+
+  /* 웹앱 등록 버튼·카드 삭제 */
+  .hub-add{
+    margin-left:auto; flex:none; display:inline-flex; align-items:center; gap:3px;
+    border:0; border-radius:10px; background:var(--brand); color:#fff;
+    padding:9px 13px; font-size:12.5px; font-weight:700; cursor:pointer; white-space:nowrap;
+    box-shadow:0 1px 2px rgba(29,78,216,.25); transition:filter .15s, transform .1s;
+  }
+  .hub-add:hover{filter:brightness(1.08)}
+  .hub-add:active{transform:scale(.98)}
+  .hub-add:disabled{opacity:.45; cursor:default; filter:none}
+  .card-del{
+    position:absolute; top:7px; right:7px; width:26px; height:26px;
+    display:grid; place-items:center; padding:0; border:1px solid transparent; border-radius:8px;
+    background:transparent; color:#cbd5e1; font-size:13px; line-height:1; font-weight:700;
+    cursor:pointer; transition:background .12s, border-color .12s, color .12s;
+  }
+  .card-del:hover{background:#fef2f2; border-color:#fecaca; color:#dc2626}
+  .card-del:active{transform:scale(.94)}
+  .hub-empty{
+    border:1px dashed #cbd5e1; border-radius:16px; background:#fff;
+    padding:34px 18px; text-align:center; color:var(--ink-3); font-size:13px; line-height:1.75;
+  }
+  .hub-empty b{color:var(--brand)}
+
+  /* 웹앱 등록 모달 */
+  .modal{
+    position:fixed; inset:0; z-index:60; display:none; align-items:center; justify-content:center;
+    padding:18px; background:rgba(15,23,42,.45);
+  }
+  .modal.show{display:flex}
+  .modal-box{
+    width:100%; max-width:420px; max-height:calc(100svh - 36px); overflow:auto;
+    background:var(--card); border-radius:18px; padding:20px 20px 18px;
+    box-shadow:0 24px 60px rgba(15,23,42,.3);
+  }
+  .modal-head{display:flex; align-items:center; gap:8px}
+  .modal-head h3{margin:0; font-size:16px; letter-spacing:-.01em}
+  .modal-close{
+    margin-left:auto; width:30px; height:30px; display:grid; place-items:center;
+    border:0; background:transparent; color:#94a3b8; font-size:18px; line-height:1; cursor:pointer; border-radius:8px;
+  }
+  .modal-close:hover{background:#f1f5f9; color:var(--ink-2)}
+  .modal-sub{margin:6px 0 16px; font-size:12px; color:var(--ink-3); line-height:1.55}
+  .field{margin-bottom:12px}
+  .field label{display:block; font-size:12.5px; font-weight:700; color:var(--ink-2); margin-bottom:6px}
+  .field .req{color:var(--sun); margin-left:2px}
+  .field .opt{color:#94a3b8; font-weight:500; margin-left:3px}
+  .field input,.field select{
+    width:100%; border:1.5px solid var(--line); border-radius:10px; padding:11px 12px;
+    font-size:14px; font-family:inherit; color:var(--ink); background:#fff; outline:none;
+    transition:border-color .15s, box-shadow .15s;
+  }
+  .field input:focus,.field select:focus{border-color:var(--brand); box-shadow:0 0 0 3px var(--brand-soft)}
+  .field input::placeholder{color:#b6c0cd}
+  .field .hint{font-size:11px; color:#94a3b8; margin-top:5px}
+  .modal-err{min-height:0; margin:2px 0 0; font-size:12.5px; color:var(--sun); line-height:1.5}
+  .modal-err:empty{display:none}
+  .modal-foot{display:flex; gap:8px; margin-top:16px}
+  .modal-foot button{
+    flex:1; border:1px solid var(--line); border-radius:11px; padding:13px 10px;
+    font-size:14px; font-weight:700; cursor:pointer; background:#fff; color:var(--ink-2);
+  }
+  .modal-foot button:hover{background:#f8fafc}
+  .modal-foot .primary{border:0; background:var(--brand); color:#fff}
+  .modal-foot .primary:hover{filter:brightness(1.06); background:var(--brand)}
+  .modal-foot .primary:disabled{opacity:.6; cursor:default; filter:none}
 
   /* 2단 레이아웃: 좌측 메뉴 + 본문 */
   .portal-layout{
@@ -449,6 +517,7 @@
     .sub-ico{font-size:12px; width:auto}
     .hub-title{margin-bottom:14px}
     .hub-title h2{font-size:17px}
+    .hub-add{padding:8px 11px; font-size:12px}
   }
 
   .loading{padding:40px; text-align:center; color:var(--ink-3); font-size:13px}
@@ -640,6 +709,48 @@
 
 <div class="toast" id="toast"></div>
 
+<!-- 웹앱 등록 모달 -->
+<div class="modal" id="appModal" role="dialog" aria-modal="true" aria-labelledby="appModalTitle">
+  <div class="modal-box">
+    <div class="modal-head">
+      <h3 id="appModalTitle">+ 웹앱 등록</h3>
+      <button class="modal-close" id="appClose" type="button" aria-label="닫기">✕</button>
+    </div>
+    <p class="modal-sub">등록한 웹앱은 구글 시트 <b>박인영_할일_DB › 웹앱목록</b>에 저장됩니다. 포털에 PIN으로 들어오면 누구든 같은 목록을 보고 등록·삭제할 수 있습니다.</p>
+    <div class="field">
+      <label for="appCat">분류<span class="req">*</span></label>
+      <select id="appCat">
+        <option value="report">보고서</option>
+        <option value="voc">VOC</option>
+        <option value="partner">협력사용</option>
+        <option value="eval">평가·검토</option>
+      </select>
+    </div>
+    <div class="field">
+      <label for="appName">웹앱 이름<span class="req">*</span></label>
+      <input id="appName" type="text" maxlength="60" placeholder="예: 협력사 월간 실적 요약" autocomplete="off">
+    </div>
+    <div class="field">
+      <label for="appDesc">한 줄 설명<span class="opt">(선택)</span></label>
+      <input id="appDesc" type="text" maxlength="120" placeholder="예: 월별 실적 취합·그래프" autocomplete="off">
+    </div>
+    <div class="field">
+      <label for="appUrl">웹앱 주소<span class="req">*</span></label>
+      <input id="appUrl" type="url" inputmode="url" maxlength="1000" placeholder="https://..." autocomplete="off">
+      <div class="hint">http:// 또는 https:// 로 시작하는 주소만 등록됩니다.</div>
+    </div>
+    <div class="field">
+      <label for="appBy">등록자<span class="opt">(선택)</span></label>
+      <input id="appBy" type="text" maxlength="20" placeholder="예: 인영 / 철수" autocomplete="off">
+    </div>
+    <p class="modal-err" id="appErr"></p>
+    <div class="modal-foot">
+      <button type="button" id="appCancel">취소</button>
+      <button type="button" class="primary" id="appSubmit">등록하기</button>
+    </div>
+  </div>
+</div>
+
 <script>
 (function(){
   "use strict";
@@ -697,7 +808,7 @@
 
   var $ = function(id){ return document.getElementById(id); };
   var state = { token:null, data:null, view:"work", cat:"report", navOpen:false,
-                pm:null, pmCache:{}, pmCovered:{}, pmLoading:{}, pmFocus:"" };
+                pm:null, pmCache:{}, pmCovered:{}, pmLoading:{}, pmFocus:"", webapps:null };
 
   /* ── 통신 ── */
   function api(body){
@@ -788,8 +899,10 @@
         return;
       }
       state.data = res.data;
+      state.webapps = (res.data && Object.prototype.toString.call(res.data.webapps) === "[object Array]") ? res.data.webapps : null;
       pmIndex();
       render();
+      if (state.view === "hub") renderHub();
     }).catch(function(){
       $("weeks").innerHTML = '<div class="loading">연결에 실패했습니다. 새로고침을 눌러 주세요.</div>';
     });
@@ -1153,7 +1266,11 @@
           COPY_ICON + '<span class="copy-txt">링크 복사</span></button>' +
         '</div>';
     }).join("");
-    return '<div class="hub-card' + (a.soon ? " soon" : "") + '">' +
+    var del = a.id
+      ? '<button class="card-del" type="button" data-del-app="' + esc(a.id) + '" data-del-name="' + esc(a.name) + '"' +
+        ' aria-label="' + esc(a.name) + ' 목록에서 삭제" title="목록에서 삭제">✕</button>'
+      : '';
+    return '<div class="hub-card' + (a.soon ? " soon" : "") + '">' + del +
       '<div class="hub-ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M9 13h6M9 17h4"/></svg></div>' +
       '<b>' + esc(a.name) + (a.soon ? '<span class="badge-soon">준비 중</span>' : '') + '</b>' +
       '<p>' + esc(a.desc) + '</p>' +
@@ -1163,6 +1280,14 @@
   function catById(id){
     for (var i=0;i<CATS.length;i++) if (CATS[i].id === id) return CATS[i];
     return null;
+  }
+  /* 웹앱목록 시트가 내려오면 그 목록으로, 없으면(구버전·오류) 기존 고정 목록으로 그린다. */
+  function appsFor(catId){
+    if (state.webapps){
+      return state.webapps.filter(function(a){ return a.cat === catId; });
+    }
+    var c = catById(catId);
+    return c ? (c.apps || []) : [];
   }
 
   /* ── 링크 복사 ── */
@@ -1206,17 +1331,89 @@
   }
   function renderHub(){
     var c = catById(state.cat) || CATS[0];
+    var apps = appsFor(c.id);
     $("hub").innerHTML = '<div class="hub-title">' +
       '<span class="ico" aria-hidden="true">' + c.icon + '</span>' +
       '<h2>' + esc(c.name) + '</h2>' +
-      '<span class="cnt">' + c.apps.length + '</span>' +
+      '<span class="cnt">' + apps.length + '</span>' +
+      '<button class="hub-add" type="button" id="hubAddBtn"' +
+        (state.webapps ? '' : ' disabled title="목록을 불러오는 중입니다"') + '>+ 웹앱 등록</button>' +
       '</div>' +
-      '<div class="hub">' + c.apps.map(hubCardHtml).join("") + '</div>';
+      (apps.length
+        ? '<div class="hub">' + apps.map(hubCardHtml).join("") + '</div>'
+        : '<div class="hub-empty">이 분류에 등록된 웹앱이 없습니다.<br>오른쪽 위 <b>+ 웹앱 등록</b> 버튼으로 추가할 수 있습니다.</div>');
     document.querySelectorAll(".sub-tab").forEach(function(b){
       var on = b.getAttribute("data-cat") === c.id;
       b.classList.toggle("active", on);
       b.setAttribute("aria-current", on ? "page" : "false");
     });
+  }
+
+  /* ── 웹앱 등록·삭제 ── */
+  function openAppModal(){
+    $("appCat").value = catById(state.cat) ? state.cat : "report";
+    $("appName").value = ""; $("appDesc").value = ""; $("appUrl").value = ""; $("appBy").value = "";
+    $("appErr").textContent = "";
+    modalBusy(false);
+    $("appModal").classList.add("show");
+    setTimeout(function(){ try{ $("appName").focus(); }catch(e){} }, 60);
+  }
+  function closeAppModal(){ $("appModal").classList.remove("show"); }
+  function modalBusy(on){
+    var b = $("appSubmit");
+    b.disabled = !!on;
+    b.textContent = on ? "등록 중…" : "등록하기";
+  }
+  function submitApp(){
+    var name = $("appName").value.trim();
+    var desc = $("appDesc").value.trim();
+    var url = $("appUrl").value.trim();
+    var by = $("appBy").value.trim();
+    var cat = $("appCat").value;
+    var err = $("appErr");
+    err.textContent = "";
+    if (!name){ err.textContent = "웹앱 이름을 입력해 주세요."; $("appName").focus(); return; }
+    if (!/^https?:\/\//i.test(url)){ err.textContent = "웹앱 주소를 https:// 부터 입력해 주세요."; $("appUrl").focus(); return; }
+    if (!catById(cat)) cat = "report";
+    if (!state.token){ err.textContent = "인증이 필요합니다. 새로고침한 뒤 다시 시도해 주세요."; return; }
+    modalBusy(true);
+    api({ action:"addWebapp", token: state.token, category: cat, name: name, desc: desc, url: url, createdBy: by })
+      .then(function(res){
+        modalBusy(false);
+        if (!res.ok){
+          if (res.error === "session_expired" || res.error === "unauthorized"){
+            closeAppModal(); clearToken(); showLock("다시 인증이 필요합니다. PIN을 입력해 주세요."); return;
+          }
+          err.textContent = res.message || "등록하지 못했습니다.";
+          return;
+        }
+        if (res.webapps) state.webapps = res.webapps;
+        closeAppModal();
+        state.cat = cat;
+        if (state.view !== "hub"){ state.navOpen = true; setView("hub"); }
+        else renderHub();
+        toast('"' + name + '" 웹앱을 등록했습니다.');
+      })
+      .catch(function(){ modalBusy(false); err.textContent = "연결에 실패했습니다. 잠시 후 다시 시도해 주세요."; });
+  }
+  function deleteApp(id, name){
+    if (!id) return;
+    if (!confirm('"' + name + '" 웹앱을 목록에서 삭제할까요?')) return;
+    if (!state.token){ toast("인증이 필요합니다. 새로고침 후 다시 시도해 주세요."); return; }
+    api({ action:"deleteWebapp", token: state.token, id: id }).then(function(res){
+      if (!res.ok){
+        if (res.error === "session_expired" || res.error === "unauthorized"){
+          clearToken(); showLock("다시 인증이 필요합니다. PIN을 입력해 주세요."); return;
+        }
+        if (res.webapps) state.webapps = res.webapps;
+        renderHub();
+        toast(res.message || "삭제하지 못했습니다.");
+        return;
+      }
+      if (res.webapps) state.webapps = res.webapps;
+      renderHub();
+      toast('"' + name + '" 웹앱을 삭제했습니다.');
+    }).catch(function(){ toast("연결에 실패했습니다. 잠시 후 다시 시도해 주세요."); });
   }
 
   /* ── 좌측 메뉴 ── */
@@ -1254,6 +1451,7 @@
     if (state.token) api({ action:"logout", token: state.token }).catch(function(){});
     clearToken();
     state.data = null;
+    state.webapps = null;
     state.view = "work"; state.cat = CATS[0].id; state.navOpen = false;
     syncNav();
     showLock("잠갔습니다. PIN을 입력해 주세요.");
@@ -1262,12 +1460,38 @@
   $("addBtn").addEventListener("click", addTask);
   $("newTitle").addEventListener("keydown", function(e){ if (e.key === "Enter") addTask(); });
 
+  /* 웹앱 등록 모달 */
+  $("appClose").addEventListener("click", closeAppModal);
+  $("appCancel").addEventListener("click", closeAppModal);
+  $("appSubmit").addEventListener("click", submitApp);
+  $("appModal").addEventListener("click", function(e){ if (e.target === $("appModal")) closeAppModal(); });
+  $("appName").addEventListener("keydown", function(e){ if (e.key === "Enter"){ e.preventDefault(); $("appDesc").focus(); } });
+  $("appDesc").addEventListener("keydown", function(e){ if (e.key === "Enter"){ e.preventDefault(); $("appUrl").focus(); } });
+  $("appUrl").addEventListener("keydown", function(e){ if (e.key === "Enter"){ e.preventDefault(); submitApp(); } });
+  $("appBy").addEventListener("keydown", function(e){ if (e.key === "Enter"){ e.preventDefault(); submitApp(); } });
+  document.addEventListener("keydown", function(e){
+    if (e.key === "Escape" && $("appModal").classList.contains("show")) closeAppModal();
+  });
+
   document.addEventListener("change", function(e){
     var t = e.target;
     if (t && t.matches('input[type=checkbox][data-id]')) toggleTask(t.getAttribute("data-id"), t.checked);
   });
   document.addEventListener("click", function(e){
     var t = e.target;
+    var delAppBtn = (t && t.closest) ? t.closest("button[data-del-app]") : null;
+    if (delAppBtn){
+      e.preventDefault(); e.stopPropagation();
+      deleteApp(delAppBtn.getAttribute("data-del-app"), delAppBtn.getAttribute("data-del-name") || "");
+      return;
+    }
+    var hubAddBtn = (t && t.closest) ? t.closest("button.hub-add") : null;
+    if (hubAddBtn){
+      e.preventDefault();
+      if (state.webapps) openAppModal();
+      else toast("웹앱 목록을 불러오는 중입니다. 잠시 후 다시 시도해 주세요.");
+      return;
+    }
     var copyBtn = (t && t.closest) ? t.closest("button.copy-btn") : null;
     if (copyBtn){
       e.preventDefault();
