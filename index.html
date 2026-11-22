@@ -155,9 +155,20 @@
   }
 
   /* 앱 허브 */
-  .hub-head{display:flex; align-items:baseline; gap:10px; margin:26px 2px 12px}
+  .hub-head{display:flex; align-items:baseline; gap:10px; margin:0 2px 14px}
   .hub-head h2{margin:0; font-size:15.5px; letter-spacing:-.01em}
   .hub-head span{font-size:12px; color:var(--ink-3)}
+  .hub-cat{margin-bottom:22px}
+  .hub-cat:last-child{margin-bottom:0}
+  .hub-cat h3{
+    margin:0 2px 9px; font-size:13.5px; color:var(--ink); letter-spacing:-.01em;
+    display:flex; align-items:center; gap:7px;
+  }
+  .hub-cat h3 .ico{font-size:14px}
+  .hub-cat h3 .cnt{
+    font-size:11px; font-weight:700; color:var(--ink-3); background:#eef2f7;
+    border-radius:999px; padding:1px 7px; line-height:1.5;
+  }
   .hub{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:11px}
   @media (max-width:900px){ .hub{grid-template-columns:repeat(2,minmax(0,1fr))} }
   @media (max-width:520px){ .hub{grid-template-columns:1fr} }
@@ -181,13 +192,35 @@
   .hub-card.shake{animation:shake .4s}
   @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
 
-  /* 서브 탭: 일정 / 앱 */
-  .tabs{display:flex; gap:6px; margin-bottom:16px; border-bottom:1px solid var(--line); overflow-x:auto}
-  .tab{
-    border:0; background:transparent; padding:11px 14px; font-size:13.5px; color:var(--ink-3);
-    cursor:pointer; border-bottom:2px solid transparent; white-space:nowrap; font-weight:500;
+  /* 2단 레이아웃: 좌측 메뉴 + 본문 */
+  .portal-layout{
+    display:grid; grid-template-columns:185px minmax(0,1fr);
+    gap:18px; align-items:start;
   }
-  .tab.active{color:var(--brand); border-bottom-color:var(--brand); font-weight:700}
+  .side-nav{
+    position:sticky; top:70px; display:flex; flex-direction:column; gap:4px;
+    background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
+    padding:8px; box-shadow:var(--shadow);
+  }
+  .side-nav .tab{
+    display:flex; align-items:center; width:100%; text-align:left;
+    border:0; background:transparent; border-radius:10px; padding:11px 12px;
+    font-size:13.5px; color:var(--ink-2); cursor:pointer; white-space:nowrap;
+    font-weight:500; transition:background .12s, color .12s;
+  }
+  .side-nav .tab:hover{background:#f8fafc}
+  .side-nav .tab.active{background:var(--brand-soft); color:var(--brand); font-weight:700}
+  .portal-content{min-width:0}
+  @media (max-width:600px){
+    .portal-layout{grid-template-columns:1fr; gap:12px}
+    .side-nav{
+      position:static; flex-direction:row; gap:6px; padding:6px;
+      overflow-x:auto; -webkit-overflow-scrolling:touch; border-radius:12px;
+    }
+    .side-nav .tab{width:auto; flex:none; padding:9px 13px; font-size:13px}
+    .side-nav .tab.active{background:var(--brand); color:#fff}
+    .hub-cat{margin-bottom:18px}
+  }
 
   .loading{padding:40px; text-align:center; color:var(--ink-3); font-size:13px}
   .toast{
@@ -236,34 +269,38 @@
   </header>
 
   <main>
-    <div class="tabs" role="tablist">
-      <button class="tab active" data-tab="schedule" role="tab">2주 일정 · 할 일</button>
-      <button class="tab" data-tab="hub" role="tab">업무 웹앱</button>
+    <div class="portal-layout">
+      <nav class="side-nav" role="tablist" aria-label="업무 포털 메뉴">
+        <button class="tab active" data-tab="schedule" role="tab" aria-selected="true">2주 일정 · 할 일</button>
+        <button class="tab" data-tab="hub" role="tab" aria-selected="false">업무 웹앱</button>
+      </nav>
+
+      <div class="portal-content">
+        <section id="view-schedule">
+          <div class="summary" id="summary"></div>
+          <div id="weeks"></div>
+          <div class="panel" id="noDuePanel" style="display:none">
+            <h3>기한 없는 할 일</h3>
+            <div id="noDueList"></div>
+          </div>
+          <div class="quick">
+            <div class="quick-in">
+              <input id="newTitle" type="text" placeholder="할 일을 입력하고 Enter" aria-label="새 할 일">
+              <input id="newDue" type="date" aria-label="기한">
+              <button id="addBtn">추가</button>
+            </div>
+          </div>
+        </section>
+
+        <section id="view-hub" style="display:none">
+          <div class="hub-head">
+            <h2>내 업무 웹앱</h2>
+            <span>새 창에서 열립니다</span>
+          </div>
+          <div id="hub"></div>
+        </section>
+      </div>
     </div>
-
-    <section id="view-schedule">
-      <div class="summary" id="summary"></div>
-      <div id="weeks"></div>
-      <div class="panel" id="noDuePanel" style="display:none">
-        <h3>기한 없는 할 일</h3>
-        <div id="noDueList"></div>
-      </div>
-      <div class="quick">
-        <div class="quick-in">
-          <input id="newTitle" type="text" placeholder="할 일을 입력하고 Enter" aria-label="새 할 일">
-          <input id="newDue" type="date" aria-label="기한">
-          <button id="addBtn">추가</button>
-        </div>
-      </div>
-    </section>
-
-    <section id="view-hub" style="display:none">
-      <div class="hub-head">
-        <h2>내 업무 웹앱</h2>
-        <span>새 창에서 열립니다</span>
-      </div>
-      <div class="hub" id="hub"></div>
-    </section>
   </main>
 
   <footer>
@@ -282,38 +319,49 @@
   var TOKEN_KEY = "ccm2_portal_token";
   var TOKEN_EXP_KEY = "ccm2_portal_exp";
 
-  var APPS = [
-    { name:"정기평가", desc:"대시보드 · 현장평가 입력", links:[
-      {label:"대시보드", url:"https://script.google.com/macros/s/AKfycbw2OqoBcfhc_vVg5WhRq5gsjoSEsxXhnrsrAnYXAA6TpDEISNNl-6F8AHdNoM6EbAVW/exec"},
-      {label:"현장평가", url:"https://script.google.com/macros/s/AKfycbwdqz_R6eoDxg_S5QLKnq25TLyYZSRD8V1xbIz8beub9tFU53eOjj_dzJjcbxlonRFdfw/exec"}
+  var CATS = [
+    { icon:"📄", name:"보고서", apps:[
+      { name:"수시점검 출장보고서", desc:"현장 점검 보고서 작성·메일", links:[
+        {label:"열기", url:"https://script.google.com/macros/s/AKfycbxC66b_tBpZMMm1_OFyqphafoX7qhTLukxWubv7sUpaonYuWu_hyqhROSAigaKjJUEN/exec"}
+      ]},
+      { name:"CCM2팀 주간업무보고", desc:"팀원 취합 · PPT · 발송", links:[
+        {label:"열기", url:"https://script.google.com/macros/s/AKfycbyv3POiI3NAFowm2nSjzvUII7dGPGyIMELqBQJCijvI3HZkagmqE0JYiKDKVGxXDC8/exec"}
+      ]},
+      { name:"이슈사항 보고", desc:"현장 이슈 보고서·제품DB", links:[
+        {label:"열기", url:"https://script.google.com/macros/s/AKfycbxTlRAJSy9zrhmfbs_V5V4hzi7dJWM5HwGH1Qtwq41FV9O8CNoi25x8qQsts6DtD4tR2g/exec"}
+      ]}
     ]},
-    { name:"수시점검 출장보고서", desc:"현장 점검 보고서 작성·메일", links:[
-      {label:"열기", url:"https://script.google.com/macros/s/AKfycbxC66b_tBpZMMm1_OFyqphafoX7qhTLukxWubv7sUpaonYuWu_hyqhROSAigaKjJUEN/exec"}
+    { icon:"📋", name:"평가·검토", apps:[
+      { name:"정기평가", desc:"대시보드 · 현장평가 입력", links:[
+        {label:"대시보드", url:"https://script.google.com/macros/s/AKfycbw2OqoBcfhc_vVg5WhRq5gsjoSEsxXhnrsrAnYXAA6TpDEISNNl-6F8AHdNoM6EbAVW/exec"},
+        {label:"현장평가", url:"https://script.google.com/macros/s/AKfycbwdqz_R6eoDxg_S5QLKnq25TLyYZSRD8V1xbIz8beub9tFU53eOjj_dzJjcbxlonRFdfw/exec"}
+      ]},
+      { name:"식품 표시사항 검토", desc:"라벨 AI 대조·수정문안", links:[
+        {label:"열기", url:"https://script.google.com/macros/s/AKfycbxZ0PMDwmV5caEl7geOZEcEr8QBIb0VftW6hdgAeYW4VBTpErm6gqaxWLMWiuA7HYE/exec"}
+      ]}
     ]},
-    { name:"소비기한 점검일지", desc:"날인 사진 OCR·AI 대조", links:[
-      {label:"공식", url:"https://script.google.com/macros/s/AKfycbxt6FbzqilORJnVADoeijeFA2EKCiEjCpvZ9u4DCjat2T1mQW4y_11t-ZZfih2FMw2d/exec"},
-      {label:"AI비전", url:"https://script.google.com/macros/s/AKfycbz_ZkeCg8I8f7KkpsBEaoITZ-HQfBU9sUWAejLyYArdgclQQcgw_Yg0lVPBE8tgU1uNzw/exec"}
+    { icon:"📊", name:"VOC", apps:[
+      { name:"VOC 클레임 대책서", desc:"원인·개선대책서 4M 분석", links:[
+        {label:"열기", url:"https://script.google.com/macros/s/AKfycbxXVe68YInRx9pxcFIXmCeKB4mRFysSdu7iVfi3CRIJzrjzwFzPtwA1aizL6O_xcMhx/exec"}
+      ]},
+      { name:"VOC 실적관리", desc:"KPI·월별 추이·AI 진단", links:[
+        {label:"열기", url:"https://script.google.com/macros/s/AKfycbxvkcYLc_fk6zxYnxKBMh6gwYwwdhfQhjvduy36hjCr9RL67Lq6utP2y8CEFnIHiwrQzg/exec"}
+      ]},
+      { name:"글로벌 김치 VOC", desc:"해외 접수·번역·회신 초안", links:[
+        {label:"열기", url:"https://script.google.com/macros/s/AKfycbzFrD3zNMrkXcuuWflcSX0Nqay9adyG-W7V9TmZ2eXd8Yw36zDw_4gTy7Bckpmc0bMvvQ/exec"}
+      ]}
     ]},
-    { name:"김치 일일 품질공유", desc:"품질 항목 촬영·엑셀·메일", links:[
-      {label:"열기", url:"https://script.google.com/macros/s/AKfycbyCENoddEiCduS5S7TudUIrP2d6Km9G3g00ayMFLaDXbRQKbyug6IGNEPnALcj816Cd/exec"}
-    ]},
-    { name:"CCM2팀 주간업무보고", desc:"팀원 취합 · PPT · 발송", links:[
-      {label:"열기", url:"https://script.google.com/macros/s/AKfycbyv3POiI3NAFowm2nSjzvUII7dGPGyIMELqBQJCijvI3HZkagmqE0JYiKDKVGxXDC8/exec"}
-    ]},
-    { name:"VOC 클레임 대책서", desc:"원인·개선대책서 4M 분석", links:[
-      {label:"열기", url:"https://script.google.com/macros/s/AKfycbxXVe68YInRx9pxcFIXmCeKB4mRFysSdu7iVfi3CRIJzrjzwFzPtwA1aizL6O_xcMhx/exec"}
-    ]},
-    { name:"VOC 실적관리", desc:"KPI·월별 추이·AI 진단", links:[
-      {label:"열기", url:"https://script.google.com/macros/s/AKfycbxvkcYLc_fk6zxYnxKBMh6gwYwwdhfQhjvduy36hjCr9RL67Lq6utP2y8CEFnIHiwrQzg/exec"}
-    ]},
-    { name:"식품 표시사항 검토", desc:"라벨 AI 대조·수정문안", links:[
-      {label:"열기", url:"https://script.google.com/macros/s/AKfycbxZ0PMDwmV5caEl7geOZEcEr8QBIb0VftW6hdgAeYW4VBTpErm6gqaxWLMWiuA7HYE/exec"}
-    ]},
-    { name:"이슈사항 보고", desc:"현장 이슈 보고서·제품DB", links:[
-      {label:"열기", url:"https://script.google.com/macros/s/AKfycbxTlRAJSy9zrhmfbs_V5V4hzi7dJWM5HwGH1Qtwq41FV9O8CNoi25x8qQsts6DtD4tR2g/exec"}
-    ]},
-    { name:"글로벌 김치 VOC", desc:"해외 접수·번역·회신 초안", links:[
-      {label:"열기", url:"https://script.google.com/macros/s/AKfycbzFrD3zNMrkXcuuWflcSX0Nqay9adyG-W7V9TmZ2eXd8Yw36zDw_4gTy7Bckpmc0bMvvQ/exec"}
+    { icon:"🏭", name:"협력사용 (일지·점검)", apps:[
+      { name:"소비기한 점검일지", desc:"날인 사진 OCR·AI 대조", links:[
+        {label:"공식", url:"https://script.google.com/macros/s/AKfycbxt6FbzqilORJnVADoeijeFA2EKCiEjCpvZ9u4DCjat2T1mQW4y_11t-ZZfih2FMw2d/exec"},
+        {label:"AI비전", url:"https://script.google.com/macros/s/AKfycbz_ZkeCg8I8f7KkpsBEaoITZ-HQfBU9sUWAejLyYArdgclQQcgw_Yg0lVPBE8tgU1uNzw/exec"}
+      ]},
+      { name:"김치 일일 품질공유", desc:"품질 항목 촬영·엑셀·메일", links:[
+        {label:"열기", url:"https://script.google.com/macros/s/AKfycbyCENoddEiCduS5S7TudUIrP2d6Km9G3g00ayMFLaDXbRQKbyug6IGNEPnALcj816Cd/exec"}
+      ]},
+      { name:"입고 원료표시사항 비교검증", desc:"원료 라벨 AI 비교·변경점 검출", links:[
+        {label:"열기", url:"https://script.google.com/macros/s/AKfycbxXfP74vHgovBFrbf6n6GCcJRP8_SP9q4zcy0iSF0Nd2sfZyqEE5JFH7E24ScW-bbv2/exec"}
+      ]}
     ]}
   ];
 
@@ -538,16 +586,23 @@
   }
 
   /* ── 앱 허브 ── */
+  function hubCardHtml(a){
+    var links = (a.links || []).map(function(l){
+      return '<a href="' + l.url + '" target="_blank" rel="noopener">' + esc(l.label) + '</a>';
+    }).join("");
+    return '<div class="hub-card' + (a.soon ? " soon" : "") + '">' +
+      '<b>' + esc(a.name) + (a.soon ? '<span class="badge-soon">준비 중</span>' : '') + '</b>' +
+      '<p>' + esc(a.desc) + '</p>' +
+      (links ? '<div class="sub">' + links + '</div>' : '') +
+      '</div>';
+  }
   function renderHub(){
-    $("hub").innerHTML = APPS.map(function(a){
-      var links = (a.links || []).map(function(l){
-        return '<a href="' + l.url + '" target="_blank" rel="noopener">' + esc(l.label) + '</a>';
-      }).join("");
-      return '<div class="hub-card' + (a.soon ? " soon" : "") + '">' +
-        '<b>' + esc(a.name) + (a.soon ? '<span class="badge-soon">준비 중</span>' : '') + '</b>' +
-        '<p>' + esc(a.desc) + '</p>' +
-        (links ? '<div class="sub">' + links + '</div>' : '') +
-        '</div>';
+    $("hub").innerHTML = CATS.map(function(c){
+      return '<section class="hub-cat">' +
+        '<h3><span class="ico">' + c.icon + '</span>' + esc(c.name) +
+        '<span class="cnt">' + c.apps.length + '</span></h3>' +
+        '<div class="hub">' + c.apps.map(hubCardHtml).join("") + '</div>' +
+        '</section>';
     }).join("");
   }
 
@@ -578,11 +633,16 @@
   });
   document.querySelectorAll(".tab").forEach(function(b){
     b.addEventListener("click", function(){
-      document.querySelectorAll(".tab").forEach(function(x){ x.classList.remove("active"); });
+      document.querySelectorAll(".tab").forEach(function(x){
+        x.classList.remove("active");
+        x.setAttribute("aria-selected", "false");
+      });
       b.classList.add("active");
+      b.setAttribute("aria-selected", "true");
       var tab = b.getAttribute("data-tab");
       $("view-schedule").style.display = tab === "schedule" ? "block" : "none";
       $("view-hub").style.display = tab === "hub" ? "block" : "none";
+      window.scrollTo({ top: 0, behavior: "smooth" });
     });
   });
 
