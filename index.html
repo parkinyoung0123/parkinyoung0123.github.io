@@ -148,6 +148,48 @@
   .panel .task{border-top:1px solid #f1f5f9}
   .panel .task:first-of-type{border-top:0}
 
+  /* 고속버스 시간표 */
+  .bus-panel{margin-bottom:16px}
+  .bus-head{display:flex; align-items:center; gap:8px}
+  .bus-head h3{margin:0; font-size:13.5px; color:var(--ink-2); letter-spacing:-.01em}
+  .bus-toggle{
+    margin-left:auto; flex:none; border:1px solid var(--line); background:#fff; color:var(--ink-3);
+    border-radius:999px; padding:4px 10px; font-size:11.5px; font-weight:500; cursor:pointer;
+  }
+  .bus-toggle:hover{background:#f8fafc}
+  .bus-body{margin-top:10px}
+  .bus-body.is-collapsed{display:none}
+  .bus-grid{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px}
+  @media (max-width:640px){ .bus-grid{grid-template-columns:1fr} }
+  .bus-col{border:1px solid var(--line); border-radius:11px; background:#fcfdff; padding:10px 11px; min-width:0}
+  .bus-col-head{display:flex; align-items:center; gap:6px; font-size:11.5px; font-weight:700; color:var(--ink-2); margin-bottom:8px}
+  .bus-dir{font-size:10px; font-weight:700; color:#fff; background:var(--ink-2); border-radius:999px; padding:2px 7px; flex:none}
+  .bus-dir.down{background:var(--brand)}
+  .bus-route + .bus-route{border-top:1px dashed var(--line); margin-top:9px; padding-top:9px}
+  .bus-route-head{display:flex; align-items:baseline; gap:6px; font-size:11.5px; color:var(--ink-3); margin-bottom:5px}
+  .bus-route-head b{font-size:12px; color:var(--ink); font-weight:700}
+  .bus-route-head span{margin-left:auto; font-size:10.5px; color:#94a3b8; white-space:nowrap}
+  .bus-rows{display:flex; flex-direction:column; gap:2px}
+  .bus-row{display:grid; grid-template-columns:44px auto minmax(0,1fr); align-items:center; gap:7px; padding:3px 5px; border-radius:7px; font-size:12px}
+  .bus-row:nth-child(odd){background:#f4f7fc}
+  .bus-t{font-variant-numeric:tabular-nums; font-weight:700; font-size:12.5px; color:var(--ink)}
+  .bus-g{font-size:10px; font-weight:700; border-radius:999px; padding:2px 7px; white-space:nowrap; line-height:1.5}
+  .bus-g.p{background:#eef2ff; color:#4338ca}
+  .bus-g.u{background:var(--brand-soft); color:var(--brand)}
+  .bus-g.n{background:#eef2f7; color:var(--ink-3)}
+  .bus-tmp{font-style:normal; font-size:9.5px; font-weight:700; color:var(--warn); margin-left:3px}
+  .bus-p{justify-self:end; font-size:11.5px; color:var(--ink-2); font-variant-numeric:tabular-nums; white-space:nowrap}
+  .bus-p i{font-style:normal; font-size:10px; color:#94a3b8; margin-left:3px}
+  .bus-fare{margin-top:8px; font-size:10.5px; color:#94a3b8; line-height:1.6; word-break:keep-all}
+  .bus-note{
+    margin-top:10px; padding-top:9px; border-top:1px solid #f1f5f9;
+    display:flex; flex-wrap:wrap; align-items:center; gap:8px; font-size:10.5px; color:var(--ink-3); line-height:1.6;
+  }
+  .bus-note a{
+    margin-left:auto; flex:none; font-size:11.5px; font-weight:700; color:var(--brand);
+    background:var(--brand-soft); border-radius:999px; padding:4px 11px;
+  }
+
   /* 빠른 추가 */
   .quick{position:sticky; bottom:0; z-index:15; padding:10px 0 4px; background:linear-gradient(180deg,rgba(241,245,249,0),var(--bg) 38%)}
   .quick-in{
@@ -352,6 +394,74 @@
             <h3>기한 없는 할 일</h3>
             <div id="noDueList"></div>
           </div>
+
+          <section class="panel bus-panel" id="busPanel" style="display:none" aria-labelledby="busTitle">
+            <div class="bus-head">
+              <h3 id="busTitle">🚌 창원역 · 마산 ↔ 동서울</h3>
+              <button class="bus-toggle" id="busToggle" aria-expanded="true" aria-controls="busBody">접기</button>
+            </div>
+            <div class="bus-body" id="busBody">
+              <div class="bus-grid">
+                <div class="bus-col">
+                  <div class="bus-col-head"><span class="bus-dir">상행</span>창원 → 서울(동서울)</div>
+                  <div class="bus-route">
+                    <div class="bus-route-head"><b>창원역</b> 출발<span>3시간 55분 · 353.5km</span></div>
+                    <div class="bus-rows">
+                      <div class="bus-row"><span class="bus-t">06:50</span><span class="bus-g u">우등</span><span class="bus-p">38,400<i>5%↓</i></span></div>
+                      <div class="bus-row"><span class="bus-t">10:00</span><span class="bus-g p">프리미엄</span><span class="bus-p">44,600<i>15%↓</i></span></div>
+                      <div class="bus-row"><span class="bus-t">15:05</span><span class="bus-g n">고속</span><span class="bus-p">27,200</span></div>
+                      <div class="bus-row"><span class="bus-t">19:00</span><span class="bus-g u">우등</span><span class="bus-p">38,400<i>5%↓</i></span></div>
+                    </div>
+                  </div>
+                  <div class="bus-route">
+                    <div class="bus-route-head"><b>마산(NC파크)</b> 출발<span>3시간 55분 · 348.9km</span></div>
+                    <div class="bus-rows">
+                      <div class="bus-row"><span class="bus-t">06:05</span><span class="bus-g p">프리미엄</span><span class="bus-p">44,000<i>15%↓</i></span></div>
+                      <div class="bus-row"><span class="bus-t">07:00</span><span class="bus-g p">프리미엄</span><span class="bus-p">44,000<i>15%↓</i></span></div>
+                      <div class="bus-row"><span class="bus-t">08:05</span><span class="bus-g p">프리미엄<em class="bus-tmp">임시</em></span><span class="bus-p">44,000<i>15%↓</i></span></div>
+                      <div class="bus-row"><span class="bus-t">09:00</span><span class="bus-g u">우등</span><span class="bus-p">37,900<i>5%↓</i></span></div>
+                      <div class="bus-row"><span class="bus-t">12:15</span><span class="bus-g u">우등</span><span class="bus-p">37,900<i>5%↓</i></span></div>
+                      <div class="bus-row"><span class="bus-t">15:45</span><span class="bus-g u">우등</span><span class="bus-p">37,900<i>5%↓</i></span></div>
+                      <div class="bus-row"><span class="bus-t">19:30</span><span class="bus-g u">우등</span><span class="bus-p">37,900<i>5%↓</i></span></div>
+                    </div>
+                  </div>
+                  <div class="bus-fare">정상운임 · 창원역 우등 40,400 / 프리미엄 52,500 / 고속 27,200</div>
+                  <div class="bus-fare">정상운임 · 마산 우등 39,900 / 프리미엄 51,800 / 고속 26,800</div>
+                </div>
+                <div class="bus-col">
+                  <div class="bus-col-head"><span class="bus-dir down">하행</span>서울(동서울) → 창원</div>
+                  <div class="bus-route">
+                    <div class="bus-route-head"><b>창원역</b> 도착<span>3시간 55분 · 353.5km</span></div>
+                    <div class="bus-rows">
+                      <div class="bus-row"><span class="bus-t">08:00</span><span class="bus-g n">고속</span><span class="bus-p">27,200</span></div>
+                      <div class="bus-row"><span class="bus-t">11:30</span><span class="bus-g u">우등</span><span class="bus-p">38,400<i>5%↓</i></span></div>
+                      <div class="bus-row"><span class="bus-t">14:00</span><span class="bus-g u">우등</span><span class="bus-p">38,400<i>5%↓</i></span></div>
+                      <div class="bus-row"><span class="bus-t">18:20</span><span class="bus-g p">프리미엄</span><span class="bus-p">44,600<i>15%↓</i></span></div>
+                    </div>
+                  </div>
+                  <div class="bus-route">
+                    <div class="bus-route-head"><b>마산(NC파크)</b> 도착<span>4시간 20분 · 348.9km</span></div>
+                    <div class="bus-rows">
+                      <div class="bus-row"><span class="bus-t">07:30</span><span class="bus-g u">우등</span><span class="bus-p">37,900<i>5%↓</i></span></div>
+                      <div class="bus-row"><span class="bus-t">11:00</span><span class="bus-g u">우등</span><span class="bus-p">37,900<i>5%↓</i></span></div>
+                      <div class="bus-row"><span class="bus-t">13:30</span><span class="bus-g p">프리미엄</span><span class="bus-p">44,000<i>15%↓</i></span></div>
+                      <div class="bus-row"><span class="bus-t">14:30</span><span class="bus-g p">프리미엄</span><span class="bus-p">44,000<i>15%↓</i></span></div>
+                      <div class="bus-row"><span class="bus-t">16:20</span><span class="bus-g p">프리미엄<em class="bus-tmp">임시</em></span><span class="bus-p">44,000<i>15%↓</i></span></div>
+                      <div class="bus-row"><span class="bus-t">18:00</span><span class="bus-g u">우등</span><span class="bus-p">37,900<i>5%↓</i></span></div>
+                      <div class="bus-row"><span class="bus-t">20:00</span><span class="bus-g u">우등</span><span class="bus-p">37,900<i>5%↓</i></span></div>
+                    </div>
+                  </div>
+                  <div class="bus-fare">정상운임 · 창원역 우등 40,400 / 프리미엄 52,500 / 고속 27,200</div>
+                  <div class="bus-fare">정상운임 · 마산 우등 39,900 / 프리미엄 51,800 / 고속 26,800</div>
+                </div>
+              </div>
+              <div class="bus-note">
+                <span>코버스 2026. 11. 23.(월) 조회 기준 · 등급·요금·소요시간은 예매 시점에 따라 달라질 수 있습니다</span>
+                <a href="https://www.kobus.co.kr" target="_blank" rel="noopener">예매하기</a>
+              </div>
+            </div>
+          </section>
+
           <div class="quick">
             <div class="quick-in">
               <input id="newTitle" type="text" placeholder="할 일을 입력하고 Enter" aria-label="새 할 일">
@@ -719,6 +829,7 @@
     $("navPersonal").setAttribute("aria-current", onPersonal ? "page" : "false");
     $("navHub").classList.toggle("section-active", onHub);
     $("navHub").setAttribute("aria-current", onHub ? "page" : "false");
+    $("busPanel").style.display = onPersonal ? "block" : "none";
     var open = onHub && state.navOpen;
     $("subNav").classList.toggle("show", open);
     $("navHub").classList.toggle("open", open);
@@ -765,6 +876,11 @@
       state.navOpen = true;
       setView("hub");
     });
+  });
+  $("busToggle").addEventListener("click", function(){
+    var body = $("busBody"), collapsed = body.classList.toggle("is-collapsed");
+    $("busToggle").textContent = collapsed ? "펼치기" : "접기";
+    $("busToggle").setAttribute("aria-expanded", collapsed ? "false" : "true");
   });
   $("navWork").addEventListener("click", function(){
     setView("work");
