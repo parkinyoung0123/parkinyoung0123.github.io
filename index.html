@@ -688,6 +688,8 @@
     if (state.token) api({ action:"logout", token: state.token }).catch(function(){});
     clearToken();
     state.data = null;
+    state.view = "schedule"; state.cat = CATS[0].id; state.navOpen = false;
+    syncNav();
     showLock("잠갔습니다. PIN을 입력해 주세요.");
     $("pin").value = "";
   });
